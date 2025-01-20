@@ -12,12 +12,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SaveUserDto {
+    private String provider;
     private String email;
     private String name;
     private String picture;
 
     public User toEntity() {
         return User.builder()
+                .provider(provider)
                 .email(email)
                 .name(name)
                 .picture(picture)
