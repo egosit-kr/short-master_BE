@@ -278,5 +278,8 @@ gradle-app.setting
 ### Gradle Patch ###
 # Java heap dump
 *.hprof
+### User Custom ###
+*.yml
+*.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,osx,linux,java,gradle,kotlin,intellij+all,visualstudiocode,groovy

@@ -7,11 +7,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SaveUserDto {
+public class UserProfileDto {
     private String provider;
     private String email;
     private String name;
@@ -19,7 +22,7 @@ public class SaveUserDto {
 
     public User toEntity() {
         return User.builder()
-                .provider(provider)
+                .provider(Collections.singletonList(provider))
                 .email(email)
                 .name(name)
                 .picture(picture)

@@ -3,9 +3,12 @@ package kr.egosit.shortmaster.domain.user;
 import jakarta.persistence.*;
 import kr.egosit.shortmaster.domain.model.BaseEntity;
 import kr.egosit.shortmaster.domain.model.Role;
+import kr.egosit.shortmaster.global.convert.StringListConverter;
 import lombok.*;
 
-@Table
+import java.util.List;
+
+@Table(name = "users")
 @Entity
 @Getter
 @Builder
@@ -15,7 +18,8 @@ public class User extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String provider;
+    @Convert(converter = StringListConverter.class)
+    private List<String> provider;
 
     private String name;
 
@@ -29,4 +33,13 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public User update(String name, String email, String picture, String provider) {
+        this.name = name;
+        this.email = email;
+        this.picture = picture;
+        this.provider.add(provider);
+        this.provider = this.provider.stream().distinct().toList();
+        return this;
+    }
 }
