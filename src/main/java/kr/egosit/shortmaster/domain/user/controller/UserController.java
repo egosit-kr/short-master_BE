@@ -1,7 +1,6 @@
 package kr.egosit.shortmaster.domain.user.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
-import kr.egosit.shortmaster.domain.user.User;
 import kr.egosit.shortmaster.domain.user.dto.OauthLoginDto;
 import kr.egosit.shortmaster.domain.user.service.UserService;
 import kr.egosit.shortmaster.global.basic.response.BasicResponse;
