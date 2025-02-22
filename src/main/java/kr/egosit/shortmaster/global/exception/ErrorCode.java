@@ -12,8 +12,9 @@ public enum ErrorCode {
     //user
     USER_NOT_FOUND("유저를 찾을수 없습니다.", HttpStatus.NOT_FOUND, "24040"),
     //Item
-    ITEM_NOT_FOUND("상품을 찾을수 없습니다.", HttpStatus.NOT_FOUND, "34040");
-
+    ITEM_NOT_FOUND("상품을 찾을수 없습니다.", HttpStatus.NOT_FOUND, "34040"),
+    //Video
+    VIDEO_NOT_FOUND("동영상을 찾을수 없습니다.", HttpStatus.NOT_FOUND, "44040");
     private final String msg;
     private final HttpStatus status;
     private final String code;

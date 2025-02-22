@@ -30,6 +30,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.cloud:spring-cloud-starter-aws:3.3.0.RELEASE")
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.777")
+    implementation("net.bramp.ffmpeg:ffmpeg:0.6.2")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
