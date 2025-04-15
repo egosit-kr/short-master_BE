@@ -3,7 +3,6 @@ package kr.egosit.shortmaster.domain.user;
 import jakarta.persistence.*;
 import kr.egosit.shortmaster.domain.model.BaseEntity;
 import kr.egosit.shortmaster.domain.model.Role;
-import kr.egosit.shortmaster.global.convert.StringListConverter;
 import lombok.*;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public class User extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Convert(converter = StringListConverter.class)
+    @ElementCollection
     private List<String> provider;
 
     private String name;
@@ -38,8 +37,10 @@ public class User extends BaseEntity {
         this.name = name;
         this.email = email;
         this.picture = picture;
-        this.provider.add(provider);
-        this.provider = this.provider.stream().distinct().toList();
+        if(this.provider.isEmpty() || !this.provider.contains(provider)) {
+            this.provider.add(provider);
+        }
         return this;
     }
+
 }

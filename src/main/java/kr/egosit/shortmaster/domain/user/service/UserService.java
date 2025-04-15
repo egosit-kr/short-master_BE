@@ -13,10 +13,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
@@ -35,14 +36,14 @@ public class UserService {
     }
 
     public TokenDto login(String code, String provider) {
-        Oauth2Service oauth2Service = oauth2ServiceFactory.getOauth2Service(provider);
+        Oauth2Service oauth2Service = oauth2ServiceFactory.getOauth2Service(provider.toLowerCase());
         String oauthAccessToken = oauth2Service.getAccessToken(code);
         UserProfileDto userProfileDto = oauth2Service.getUserProfile(oauthAccessToken);
 
         User user = saveOrUpdate(userProfileDto);
 
-        String accessToken = jwtProvider.generateAccessToken(user.getId());
-        String refreshToken = jwtProvider.generateRefreshToken(user.getId());
+        String accessToken = jwtProvider.generateAccessToken(user.getEmail(), Collections.singletonMap("role", user.getRole().toString()));
+        String refreshToken = jwtProvider.generateRefreshToken(user.getId(), user.getEmail());
         refreshTokenService.removeUserRefreshToken(user.getId());
 
         return new TokenDto(refreshTokenService.uploadRefreshToken(accessToken, refreshToken, user.getId()));
@@ -57,7 +58,7 @@ public class UserService {
     public User saveOrUpdate(UserProfileDto userProfileDto) {
 
         User user = userRepository.findByEmailAndProvider(userProfileDto.getEmail(), userProfileDto.getProvider())
-                .map(m -> m.update(userProfileDto.getName(), userProfileDto.getEmail(), userProfileDto.getPicture(), userProfileDto.getProvider())) // OAuth 서비스 사이트에서 유저 정보 변경이 있을 수 있기 때문에 우리 DB에도 update
+                .map(m -> m.update(userProfileDto.getName(), userProfileDto.getEmail(), userProfileDto.getPicture(), userProfileDto.getProvider()))
                 .orElse(userProfileDto.toEntity());
 
         return userRepository.save(user);

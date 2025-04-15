@@ -24,4 +24,9 @@ public class RefreshToken {
     public void updateAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
+
+    public void updateToken(String accessToken, String refreshToken) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+    }
 }

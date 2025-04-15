@@ -3,12 +3,16 @@ package kr.egosit.shortmaster.global.security.jwt.provider;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import kr.egosit.shortmaster.global.security.auth.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,45 +91,37 @@ public class JwtProvider {
     /**
      * access token 생성
      *
-     * @param id token 생성 id
+     * @param email token 생성 email
      * @return access token
      */
-    public String generateAccessToken(final String id) {
-        return generateAccessToken(id, new HashMap<>());
+    public String generateAccessToken(final String email) {
+        return generateAccessToken(email, new HashMap<>());
     }
 
     /**
      * access token 생성
      *
-     * @param id token 생성 id
-     * @return access token
-     */
-    public String generateAccessToken(final long id) {
-        return generateAccessToken(String.valueOf(id), new HashMap<>());
-    }
-
-    /**
-     * access token 생성
-     *
-     * @param id token 생성 id
+     * @param email token 생성 email
      * @param claims token 생성 claims
      * @return access token
      */
-    public String generateAccessToken(final String id, final Map<String, Object> claims) {
-        return doGenerateAccessToken(id, claims);
+    public String generateAccessToken(final String email, final Map<String, Object> claims) {
+        return doGenerateAccessToken(email, claims);
     }
 
     /**
      * JWT access token 생성
      *
-     * @param id token 생성 id
+     * @param email token 생성 email
      * @param claims token 생성 claims
      * @return access token
      */
-    private String doGenerateAccessToken(final String id, final Map<String, Object> claims) {
+    private String doGenerateAccessToken(final String email, final Map<String, Object> claims) {
         return Jwts.builder()
                 .setClaims(claims)
-                .setId(id)
+                .setIssuer("knowhowai")
+                .setSubject("auth")
+                .setAudience(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALID)) // 30분
                 .signWith(key)
@@ -138,8 +134,8 @@ public class JwtProvider {
      * @param id token 생성 id
      * @return refresh token
      */
-    public String generateRefreshToken(final String id) {
-        return doGenerateRefreshToken(id);
+    public String generateRefreshToken(final String id, String email) {
+        return doGenerateRefreshToken(id, email);
     }
 
     /**
@@ -148,8 +144,8 @@ public class JwtProvider {
      * @param id token 생성 id
      * @return refresh token
      */
-    public String generateRefreshToken(final long id) {
-        return doGenerateRefreshToken(String.valueOf(id));
+    public String generateRefreshToken(final long id, String email) {
+        return doGenerateRefreshToken(String.valueOf(id), email);
     }
 
     /**
@@ -158,9 +154,11 @@ public class JwtProvider {
      * @param id token 생성 id
      * @return refresh token
      */
-    private String doGenerateRefreshToken(final String id) {
+    private String doGenerateRefreshToken(final String id, String email) {
         return Jwts.builder()
                 .setId(id)
+                .setSubject("refreshToken")
+                .setAudience(email)
                 .setExpiration(new Date(System.currentTimeMillis() + (JWT_TOKEN_VALID * 2) * 24 * 12)) // 12일
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(key)
@@ -195,4 +193,26 @@ public class JwtProvider {
         return false;
     }
 
+    public boolean isRefreshToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject().equals("refreshToken");
+    }
+
+    public Authentication getAuthentication(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        String role = claims.get("role", String.class);
+        String email = claims.getAudience();
+        PrincipalDetails principalDetails = new PrincipalDetails(email, Collections.singletonList(role));
+
+        return new UsernamePasswordAuthenticationToken(principalDetails, "", principalDetails.getAuthorities());
+    }
 }

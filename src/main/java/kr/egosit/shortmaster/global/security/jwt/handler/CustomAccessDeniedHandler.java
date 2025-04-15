@@ -1,9 +1,9 @@
 package kr.egosit.shortmaster.global.security.jwt.handler;
 
-import com.nimbusds.jose.shaded.gson.JsonObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -18,7 +18,9 @@ import java.io.PrintWriter;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
@@ -30,9 +32,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
 
-        JsonObject returnJson = new JsonObject();
-        returnJson.addProperty("errorCode", "04030");
-        returnJson.addProperty("errorMsg", "접근 권한이 없습니다.");
+        String returnJson = "{\"errorCode\": \"04030\", \"errorMsg\": \"접근 권한이 없습니다.\"}";
 
         PrintWriter out = response.getWriter();
         out.print(returnJson);

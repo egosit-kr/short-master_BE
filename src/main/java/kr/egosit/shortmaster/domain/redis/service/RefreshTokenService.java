@@ -16,15 +16,19 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
 
-    public Optional<RefreshToken> getRefreshTokenByAccessToken(String accessToken) {
+    public Optional<RefreshToken> findRefreshTokenByAccessToken(String accessToken) {
         return refreshTokenRepository.findByAccessToken(accessToken);
     }
 
+    public Optional<RefreshToken> findByUserId(long userId) {
+        return refreshTokenRepository.findById(userId);
+    }
+
     public RefreshToken updateAccessToken(String oldAccessToken, String newAccessToken) {
-        Optional<RefreshToken> refreshTokenOpt = getRefreshTokenByAccessToken(oldAccessToken);
+        Optional<RefreshToken> refreshTokenOpt = findRefreshTokenByAccessToken(oldAccessToken);
 
         if (refreshTokenOpt.isEmpty())
-                return null;
+            return null;
 
         RefreshToken refreshToken = refreshTokenOpt.get();
         refreshToken.updateAccessToken(newAccessToken);

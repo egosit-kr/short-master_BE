@@ -17,6 +17,11 @@ public class GlobalExceptionHandler {
         return BasicResponse.error(e.getErrorCode());
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<BasicResponse.BaseResponse> runtimeException(RuntimeException e) {
+        return createCustomErrorResponse("알 수 없는 에러가 발생하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR, BasicResponse.BaseStatus.ERROR, e);
+    }
+
     private ResponseEntity<BasicResponse.BaseResponse> createErrorResponse(ErrorCode errorCode, Exception e) {
         log.error("Exception: ${e.javaClass.simpleName}", e);
         return BasicResponse.error(errorCode);

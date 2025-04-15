@@ -28,7 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.cloud:spring-cloud-starter-aws:3.3.0.RELEASE")
+    implementation("software.amazon.awssdk:s3:2.31.21")
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.777")
     implementation("net.bramp.ffmpeg:ffmpeg:0.6.2")
     implementation("org.springframework.boot:spring-boot-starter-web")
